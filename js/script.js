@@ -11,7 +11,9 @@
 (function ($, OC) {
     var appname = 'show_all_activity';
     var activity = {
-        modal: $('<div>'),
+        modal: $('<div>').attr({id: 'container'}),
+        container: $('<div>'),
+        lastDateGroup: null,
         footer: $('<div>').attr({class: 'footer'}),
         loader: $('<div>').attr({class: 'loading-activity'}),
         message: $('<p>').attr({class: 'message'}),
@@ -32,10 +34,11 @@
             $('#userlist  tbody tr:hidden .remove').before($('<td>').append(btn));
         });
             
-        activity.footer.append(activity.loader);
-        activity.footer.append(activity.message);
-        activity.footer.append(activity.more_btn);
-        activity.modal.append(activity.footer);
+        this.footer.append(this.loader);
+        this.footer.append(this.message);
+        this.footer.append(this.more_btn);
+        this.modal.append(this.container);
+        this.modal.append(this.footer);
     };
 
     activity.settings = {
@@ -61,20 +64,76 @@
             method:'GET',
 		    url: OC.generateUrl('/apps/show_all_activity/fetch'),
 		    data: {
-                user: user, 
-                page: currentPage
+                page: currentPage,
+                user: user
             }
 	    });
     };
+    
+    activity.appendActivityToContainer = function ($activity) {
+        this.makeSureDateGroupExists($activity.relativeTimestamp, $activity.readableTimestamp);
+        this.addActivity($activity);
+    
+    };
 
-    activity.transformData = function(result, modal) {
-        modal.find('.footer').before(result);
-        modal.find('.box a').not('.filename').remove();
-        modal.find('.box .activity-icon').remove();
-        modal.find('.box .activitysubject .avatar').remove();
-        modal.find('.activitysubject a').replaceWith(function(){
-            return $('<b class="filename">').append($(this).text());
-        });
+	activity.makeSureDateGroupExists = function($relativeTimestamp, $readableTimestamp) {
+        var $lastGroup = this.container.children().last();
+
+        if ($lastGroup.data('date') !== $relativeTimestamp) {
+            var $content = '<div class="section activity-section group" data-date="' + escapeHTML($relativeTimestamp) + '">' + "\n"
+                +'	<h2>'+"\n"
+                +'		<span class="has-tooltip" title="' + escapeHTML($readableTimestamp) + '">' + escapeHTML($relativeTimestamp) + '</span>' + "\n"
+                +'	</h2>' + "\n"
+                +'	<div class="boxcontainer">' + "\n"
+                +'	</div>' + "\n"
+                +'</div>';
+            $content = $($content);
+            this.container.append($content);
+            this.lastDateGroup = $content;
+        }
+    };
+
+    activity.addActivity = function($activity) {
+        
+        var $content = ''
+            + '<div class="box">' + "\n"
+            + '	<div class="messagecontainer">' + "\n"
+
+            + '		<div class="activitysubject">' + "\n"
+            +   $activity.subjectformatted.markup.trimmed + "\n"
+            + '	    </div>' + "\n"
+
+            +'		<span class="activitytime has-tooltip" title="' + escapeHTML($activity.readableDateTimestamp) + '">' + "\n"
+            + '			' + escapeHTML($activity.relativeDateTimestamp) + "\n"
+            +'		</span>' + "\n";
+         
+        /*
+        if ($activity.message) {
+            $content += '<div class="activitymessage">' + "\n"
+                + $activity.messageformatted.markup.trimmed + "\n"
+                +'</div>' + "\n";
+        }
+        */
+
+        $content += '	</div>' + "\n"
+            +'</div>';
+
+        $content = $($content);
+        
+        $content.find('.activitysubject .avatar').remove();
+        $content.find('a.filename').replaceWith(function () {
+            return $('<b class="filename">').text($(this).text());
+         });
+
+        this.lastDateGroup.append($content);
+    };
+
+    activity.transformData = function(data, modal) {
+        for (var i = 0; i < data.length; i++) {
+            var $activity = data[i];
+            this.appendActivityToContainer($activity);
+        }
+
     };
 
     activity.transformTooltip = function(modal) {
@@ -93,6 +152,8 @@
             current_tooltip.find('.tooltip').replaceWith($('<b class="filename">').append(more[more.length - 1]));
         });
     };
+    
+    
 
     activity.finish = function(message) {
         activity.finished = true;
@@ -109,10 +170,8 @@
         activity.currentPage++; 
 
         activity.getData(activity.user, activity.currentPage).done(function(result){
-            
-            result === '' && activity.finish('No more activity.');
-
-            activity.transformData(result, activity.modal);
+            console.dir(result);
+            result.length === 0 ? activity.finish('No more activity.') : activity.transformData(result,activity.container);
             activity.transformTooltip(activity.modal);
             activity.loader.hide();
         });
@@ -129,13 +188,12 @@
 
 	   	    activity.getData(activity.user, activity.currentPage).done(function(result) {
                 var options = $.extend({title: activity.user}, activity.settings);
-
+                
                 activity.loader.hide();
                 activity.modal.dialog(options);
 
-                result === '' && activity.finish('There is no activity.');
-
-                activity.transformData(result, activity.modal);
+                result.length === 0 ? activity.finish('There is no activity.') : activity.transformData(result,activity.container);
+            
                 activity.transformTooltip(activity.modal);
             });
 		});

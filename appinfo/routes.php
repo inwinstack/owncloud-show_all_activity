@@ -17,15 +17,9 @@
  * The controller class has to be registered in the application.php file since
  * it's instantiated in there
  */
-namespace OCA\Show_All_Activity\AppInfo;
-
-$this->create('test_ajax', 'ajax/test.php')
-	->actionInclude('show_all_activity/ajax/test.php');
-
-
-$application = new Application();
-$application->registerRoutes($this, [
+return [
     'routes' => [
-       ['name' => 'Show#fetch','url' => '/fetch', 'verb' => 'GET']
+       ['name' => 'show#fetch','url' => '/fetch', 'verb' => 'GET']
     ]
-]);
+];
+

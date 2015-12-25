@@ -1,9 +1,10 @@
 <?php
 namespace OCA\Show_All_Activity\AppInfo;
 
-use \OCP\AppFramework\App;
+use OC\Files\View;
+use OCP\AppFramework\App;
 use OCP\IContainer;
-use \OCA\Show_All_Activity\Controller\Show;
+use OCA\Show_All_Activity\Controller\ShowController;
 
 class Application extends App {
 
@@ -18,13 +19,21 @@ class Application extends App {
 
             
             $container->registerService('ShowController', function($c){
-                return new Show(
+                $server = $c->query('ServerContainer');
+
+                return new ShowController(
                     $c->query('AppName'),
-                    $c->query('Request'),
+				    $server->getRequest(),
                     $c->query('ActivityApplication')->getContainer()->query('ActivityData'),
                     $c->query('ActivityApplication')->getContainer()->query('GroupHelper'),
+                    $c->query('ActivityApplication')->getContainer()->query('Navigation'),
                     $c->query('ActivityApplication')->getContainer()->query('UserSettings'),
-                    $c->query('ActivityApplication')->getContainer()->query('DisplayHelper')
+                    $server->getDateTimeFormatter(),
+                    $server->getPreviewManager(),
+                    $server->getURLGenerator(),
+                    $server->getMimeTypeDetector(),
+                    new View(''),
+                    $c->query('ActivityApplication')->getContainer()->query('CurrentUID')
                 );
             });
     }

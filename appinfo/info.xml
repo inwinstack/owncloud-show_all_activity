@@ -5,7 +5,7 @@
     <description>show all activity for admin</description>
     <licence>AGPL</licence>
     <author>eric</author>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
     <namespace>Show_All_Activity</namespace>
     <category>other</category>
     <dependencies>
