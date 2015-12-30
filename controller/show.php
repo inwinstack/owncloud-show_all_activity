@@ -9,7 +9,7 @@ use \OCA\Activity\UserSettings;
 use \OCA\Activity\GroupHelper;
 use \OCA\Activity\Data;
 
-class Show extends Controller{
+class Show extends Controller {
     const DEFAULT_PAGE_SIZE = 30;
     
     protected $data;
@@ -22,7 +22,7 @@ class Show extends Controller{
 
      
 
-    public function __construct($AppName, IRequest $request, Data $data, GroupHelper $helper, UserSettings $settings, DisplayHelper $display){
+    public function __construct($AppName, IRequest $request, Data $data, GroupHelper $helper, UserSettings $settings, Display $display){
 		parent::__construct($AppName, $request);
         $this->data = $data;
         $this->helper = $helper;
@@ -39,7 +39,7 @@ class Show extends Controller{
 	    $template = new TemplateResponse('activity','stream.list',[
          'activity' => $this->data->read($this->helper, $this->settings, self::DEFAULT_PAGE_SIZE*$pageoffset, self::DEFAULT_PAGE_SIZE, 'all', $user),
          'displayHelper' => $this->display],'');
-        file_put_contents('show_activity',$template->render());
+
         return $template->render(); 
    }
 }
