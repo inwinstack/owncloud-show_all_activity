@@ -11,8 +11,8 @@
 
 namespace OCA\Show_All_Activity\AppInfo;
 
-if (\OC_User::isAdminUser(\OC_User::getUser())) {
-    \OCP\Util::addScript( 'show_all_activity', "script" );
+//if (\OC_User::isAdminUser(\OC_User::getUser())) {
+    \OCP\Util::addScript( 'show_all_activity', "activity" );
     \OCP\Util::addStyle( 'activity', "style" );
     \OCP\Util::addStyle( 'show_all_activity', "style" );
-}
+//}

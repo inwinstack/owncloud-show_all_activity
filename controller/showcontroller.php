@@ -79,6 +79,10 @@ class ShowController extends Controller{
         $this->user = $user;
 	}
 
+    /**
+     * @NoAdminRequired
+     */
+
     public function fetch($page, $user, $filter = 'all', $objecttype = '', $objectid = 0) {
 		$pageOffset = $page - 1;
 		$filter = $this->data->validateFilter($filter);
