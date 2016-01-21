@@ -16,7 +16,5 @@ use OCP\AppFramework\App;
 //$app = new App('show_all_activity');
 //$container = $app->getContainer();
 
-if (\OC_User::isAdminUser(\OC_User::getUser())) {
-    \OCP\Util::addScript( 'show_all_activity', "script" );
-    \OCP\Util::addStyle( 'show_all_activity', "style" );
-}
+\OCP\Util::addScript( 'show_all_activity', "activity" );
+\OCP\Util::addStyle( 'show_all_activity', "style" );

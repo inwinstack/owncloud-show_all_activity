@@ -31,6 +31,9 @@ class Show extends Controller {
 	}
     
 
+    /**
+     * @NoAdminRequired
+     */
 
     public function fetch($user, $page){
         
