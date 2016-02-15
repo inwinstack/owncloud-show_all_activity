@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <info>
     <id>show_all_activity</id>
-    <name>Show All Activity</name>
-    <description>show all activity for admin</description>
+    <name>Activity Viewer</name>
+    <description>Provide administrativie users to view user activity in user list</description>
     <licence>AGPL</licence>
     <author>eric</author>
     <version>0.0.2</version>
     <namespace>Show_All_Activity</namespace>
     <category>other</category>
     <dependencies>
-        <owncloud min-version="8.1" />
+        <owncloud min-version="8.2" />
     </dependencies>
 </info>
